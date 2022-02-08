@@ -1,28 +1,35 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <v-app>
+    <v-app-bar app color="secondary" dark>
+        <h1 class="font-weight-thin mx-auto"> UNKNOWER</h1>
+    </v-app-bar>
+
+    <v-main>
+      <WorldClock />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import WorldClock from "./components/WorldClock";
 
 export default {
   name: "App",
+
   components: {
-    HelloWorld,
+    WorldClock,
   },
+
+  data: () => ({
+    //
+  }),
 };
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+h1 {
+  letter-spacing: 30px;
+  position: relative;
+  right: -30px;
 }
 </style>
