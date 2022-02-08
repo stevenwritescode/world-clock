@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <v-app-bar app color="secondary" dark>
-        <h1 class="font-weight-thin mx-auto"> UNKNOWER</h1>
+    <v-app-bar app color="secondary">
+      <h1 class="font-weight-thin mx-auto">UNKNOWER</h1>
     </v-app-bar>
 
     <v-main>

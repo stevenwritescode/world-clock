@@ -1,56 +1,90 @@
 <template>
   <v-container>
     <v-row class="text-center">
-      <v-col cols="12">
-        <h2>UTC</h2>
-        <h1>{{ utc }}</h1>
+      <v-col cols="3" class="date">
+        <v-card class="pa-4">
+          <h2>TODAY</h2>
+          <h3>{{ today }}</h3>
+          <h2>{{ todayYear }}</h2>
+        </v-card>
+      </v-col>
+      <v-spacer></v-spacer>
+      <v-col cols="4">
+        <v-card class="pa-4">
+          <h2>UTC</h2>
+          <h1>{{ utc }}</h1>
+        </v-card>
+      </v-col>
+      <v-spacer></v-spacer>
+      <v-col cols="3" class="date">
+        <v-card class="pa-4">
+          <h2>TOMORROW</h2>
+          <h3>{{ tomorrow }}</h3>
+          <h2>{{ tomorrowYear }}</h2>
+        </v-card>
       </v-col>
     </v-row>
     <v-row class="text-center">
       <v-col cols="3">
-        <h2>DENVER</h2>
-        <h1>{{ denver }}</h1>
-        <h3>{{ denver12h }}</h3>
+        <v-card class="pa-4">
+          <h2>DENVER</h2>
+          <h1>{{ denver }}</h1>
+          <h3>{{ denver12h }}</h3>
+        </v-card>
       </v-col>
       <v-col cols="3">
-        <h2>NEW YORK</h2>
-        <h1>{{ newyork }}</h1>
-        <h3>{{ newyork12h }}</h3>
+        <v-card class="pa-4">
+          <h2>NEW YORK</h2>
+          <h1>{{ newyork }}</h1>
+          <h3>{{ newyork12h }}</h3>
+        </v-card>
       </v-col>
       <v-col cols="3">
-        <h2>LONDON</h2>
-        <h1>{{ london }}</h1>
-        <h3>{{ london12h }}</h3>
+        <v-card class="pa-4">
+          <h2>LONDON</h2>
+          <h1>{{ london }}</h1>
+          <h3>{{ london12h }}</h3>
+        </v-card>
       </v-col>
       <v-col cols="3">
-        <h2>BERLIN</h2>
-        <h1>{{ berlin }}</h1>
-        <h3>{{ berlin12h }}</h3>
+        <v-card class="pa-4">
+          <h2>BERLIN</h2>
+          <h1>{{ berlin }}</h1>
+          <h3>{{ berlin12h }}</h3>
+        </v-card>
       </v-col>
     </v-row>
     <v-row class="text-center">
       <v-col cols="3">
-        <h2>MOSCOW</h2>
-        <h1>{{ moscow }}</h1>
-        <h3>{{ moscow12h }}</h3>
+        <v-card class="pa-4">
+          <h2>MOSCOW</h2>
+          <h1>{{ moscow }}</h1>
+          <h3>{{ moscow12h }}</h3>
+        </v-card>
       </v-col>
       <v-col cols="3">
-        <h2>TOKYO</h2>
-        <h1>{{ tokyo }}</h1>
-        <h3>{{ tokyo12h }}</h3>
+        <v-card class="pa-4">
+          <h2>TOKYO</h2>
+          <h1>{{ tokyo }}</h1>
+          <h3>{{ tokyo12h }}</h3>
+        </v-card>
       </v-col>
       <v-col cols="3">
-        <h2>SYDNEY</h2>
-        <h1>{{ sydney }}</h1>
-        <h3>{{ sydney12h }}</h3>
+        <v-card class="pa-4">
+          <h2>SYDNEY</h2>
+          <h1>{{ sydney }}</h1>
+          <h3>{{ sydney12h }}</h3>
+        </v-card>
       </v-col>
       <v-col cols="3">
-        <h2>AUCKLAND</h2>
-        <h1>{{ auckland }}</h1>
-        <h3>{{ auckland12h }}</h3>
+        <v-card class="pa-4">
+          <h2>AUCKLAND</h2>
+          <h1>{{ auckland }}</h1>
+          <h3>{{ auckland12h }}</h3>
+        </v-card>
       </v-col>
     </v-row>
-    <v-row class="text-center py-4">
+    <v-row class="text-center">
       <v-col cols="12">
         <h2 style="text-transform: uppercase">NEXT SHOW IS {{ nextShow }}</h2>
       </v-col>
@@ -65,8 +99,12 @@ export default {
 
   data: () => ({
     timeInterval: "",
-    utc: moment().tz("UTC").format("H:m:ss"),
-    newyork: moment().tz("America/New_York").format("H:m:ss"),
+    today: moment().tz("America/Denver").format("MMMM Do"),
+    todayYear: moment().tz("America/Denver").format("YYYY"),
+    tomorrow: moment().tz("America/Denver").add(1, "day").format("MMMM Do"),
+    tomorrowYear: moment().tz("America/Denver").add(1, "day").format("YYYY"),
+    utc: moment().tz("UTC").format("H:mm:ss"),
+    newyork: moment().tz("America/New_York").format("H:mm:ss"),
     newyork12h: moment().tz("America/New_York").format("h:mm:ss A"),
     denver: moment().tz("America/Denver").format("H:mm:ss"),
     denver12h: moment().tz("America/Denver").format("h:mm:ss A"),
@@ -84,7 +122,7 @@ export default {
     auckland12h: moment().tz("Pacific/Auckland").format("h:mm:ss A"),
     nextShow: "",
   }),
-  created: function () {
+  mounted: function () {
     clearInterval(this.timeInterval);
     this.updateTime();
   },
@@ -92,11 +130,18 @@ export default {
     clearInterval(this.timeInterval);
   },
   methods: {
+    toggleDarkMode: function () {
+      if (moment().format("H") > 20 || moment().format("H") < 6) {
+        this.$vuetify.theme.dark = true;
+      } else {
+        this.$vuetify.theme.dark = false;
+      }
+    },
     updateTime: function () {
       const data = this;
       setInterval(function () {
-        data.utc = moment().tz("UTC").format("H:m:ss");
-        data.newyork = moment().tz("America/New_York").format("H:m:ss");
+        data.utc = moment().tz("UTC").format("H:mm:ss");
+        data.newyork = moment().tz("America/New_York").format("H:mm:ss");
         data.newyork12h = moment().tz("America/New_York").format("h:mm:ss A");
         data.denver = moment().tz("America/Denver").format("H:mm:ss");
         data.denver12h = moment().tz("America/Denver").format("h:mm:ss A");
@@ -112,7 +157,19 @@ export default {
         data.sydney12h = moment().tz("Australia/Sydney").format("h:mm:ss A");
         data.auckland = moment().tz("Pacific/Auckland").format("H:mm:ss");
         data.auckland12h = moment().tz("Pacific/Auckland").format("h:mm:ss A");
+        data.today = moment().tz("America/Denver").format("MMMM Do");
+        data.todayYear = moment().tz("America/Denver").format("YYYY");
+        data.tomorrow = moment()
+          .tz("America/Denver")
+          .add(1, "day")
+          .format("MMMM Do");
+        data.tomorrowYear = moment()
+          .tz("America/Denver")
+          .add(1, "day")
+          .format("YYYY");
         data.nextShow = data.getNextShow();
+
+        data.toggleDarkMode();
       }, 500);
     },
     getNextShow: function () {
@@ -125,16 +182,25 @@ export default {
       const europeShow = `${nextSaturday}T19:00:00Z`;
       const americasShow = `${nextSunday}T01:00:00Z`;
 
-      if (moment(australiaShow).diff(now, "days") < 7 && moment(australiaShow).diff(now, "days") > 0) {
+      if (
+        moment(australiaShow).diff(now, "days") < 7 &&
+        moment(australiaShow).diff(now, "days") > 0
+      ) {
         australiaShow = firstShow;
       }
 
       if (now.isBefore(australiaShow)) {
-        return `for Australia ${moment(australiaShow).fromNow()} at ${moment(australiaShow).format('h:mm:ss A')}`;
+        return `for Asia/Pacific ${moment(australiaShow).fromNow()} at ${moment(
+          australiaShow
+        ).format("h:mm:ss A")}`;
       } else if (now.isBefore(europeShow)) {
-        return `for Europe ${moment(europeShow).fromNow()} at ${moment(europeShow).format('h:mm:ss A')}`;
+        return `for Europe ${moment(europeShow).fromNow()} at ${moment(
+          europeShow
+        ).format("h:mm:ss A")}`;
       } else if (now.isBefore(americasShow)) {
-        return `for The Americas ${moment(americasShow).fromNow()} at ${moment(americasShow).format('h:mm:ss A')}`;
+        return `for The Americas ${moment(americasShow).fromNow()} at ${moment(
+          americasShow
+        ).format("h:mm:ss A")}`;
       } else {
         return "Unknown";
       }
@@ -145,9 +211,18 @@ export default {
 
 <style scoped>
 h1 {
-  font-size: 60pt;
+  font-size: 56pt;
 }
 h2 {
-  font-size: 42pt;
+  font-size: 38pt;
+}
+.date h2 {
+  font-size: 28pt;
+  line-height: 32pt;
+  margin-bottom: 12px;
+}
+.date h3 {
+  font-size: 24pt;
+  line-height: 26pt;
 }
 </style>
