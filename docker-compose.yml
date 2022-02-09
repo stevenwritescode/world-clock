@@ -4,13 +4,9 @@ services:
 
   world-clock:
     container_name: world-clock
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'
     ports:
-      - '8080:8080'
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+      - '80:80'
