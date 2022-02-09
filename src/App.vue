@@ -1,10 +1,10 @@
 <template>
   <v-app>
-    <v-app-bar app color="secondary">
-      <h1 class="font-weight-thin mx-auto">UNKNOWER</h1>
+    <v-app-bar app color="secondary" height="extended">
+      <h1 class="font-weight-thin mx-auto text-center">UNKNOWER</h1>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="main">
       <WorldClock />
     </v-main>
   </v-app>
@@ -28,8 +28,11 @@ export default {
 
 <style scoped>
 h1 {
+  font-size: 48pt;
   letter-spacing: 30px;
-  position: relative;
-  right: -30px;
+  padding-left: 30px;
+}
+main {
+  margin-top: 150px;
 }
 </style>

@@ -86,7 +86,7 @@
     </v-row>
     <v-row class="text-center">
       <v-col cols="12">
-        <h2 style="text-transform: uppercase">NEXT SHOW IS {{ nextShow }}</h2>
+        <h2 class="mt-4 next">NEXT SHOW IS {{ nextShow }}</h2>
       </v-col>
     </v-row>
   </v-container>
@@ -224,5 +224,8 @@ h2 {
 .date h3 {
   font-size: 24pt;
   line-height: 26pt;
+}
+.next{
+  text-transform: uppercase
 }
 </style>
