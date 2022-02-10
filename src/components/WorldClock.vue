@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     toggleDarkMode: function () {
-      if (moment().format("H") > 20 || moment().format("H") < 6) {
+      if (moment().format("H") >= 20 || moment().format("H") < 6) {
         this.$vuetify.theme.dark = true;
       } else {
         this.$vuetify.theme.dark = false;
