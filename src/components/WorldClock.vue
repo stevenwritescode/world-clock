@@ -98,6 +98,7 @@ export default {
   name: "WorldClock",
 
   data: () => ({
+    alwaysDarkMode: true,
     timeInterval: "",
     today: moment().tz("America/Denver").format("MMMM Do"),
     todayYear: moment().tz("America/Denver").format("YYYY"),
@@ -129,9 +130,18 @@ export default {
   beforeDestroy() {
     clearInterval(this.timeInterval);
   },
+  computed: {
+    darkModeEnabled: function () {
+      return this.$vuetify.theme.dark;
+    },
+  },
   methods: {
     toggleDarkMode: function () {
-      if (moment().format("H") >= 20 || moment().format("H") < 6) {
+      if (
+        this.alwaysDarkMode ||
+        moment().format("H") >= 20 ||
+        moment().format("H") < 6
+      ) {
         this.$vuetify.theme.dark = true;
       } else {
         this.$vuetify.theme.dark = false;
@@ -159,17 +169,16 @@ export default {
         data.auckland12h = moment().tz("Pacific/Auckland").format("h:mm:ss A");
         data.today = moment().tz("America/Denver").format("MMMM Do");
         data.todayYear = moment().tz("America/Denver").format("YYYY");
-        data.tomorrow = moment()
-          .tz("America/Denver")
-          .add(1, "day")
-          .format("MMMM Do");
-        data.tomorrowYear = moment()
-          .tz("America/Denver")
-          .add(1, "day")
-          .format("YYYY");
+        data.tomorrow = moment().tz("America/Denver").add(1, "day").format("MMMM Do");
+        data.tomorrowYear = moment().tz("America/Denver").add(1, "day").format("YYYY");
         data.nextShow = data.getNextShow();
 
-        data.toggleDarkMode();
+        if (data.alwaysDarkMode && data.darkModeEnabled) {
+          return
+        } else {
+          data.toggleDarkMode();
+        }
+
       }, 500);
     },
     getNextShow: function () {
@@ -225,7 +234,7 @@ h2 {
   font-size: 24pt;
   line-height: 26pt;
 }
-.next{
-  text-transform: uppercase
+.next {
+  text-transform: uppercase;
 }
 </style>
