@@ -193,17 +193,17 @@ export default {
 
       if (
         moment(australiaShow).diff(now, "days") < 7 &&
-        moment(australiaShow).diff(now, "days") > 0
+        moment(australiaShow).diff(now, "days") > -2
       ) {
         australiaShow = firstShow;
       }
 
       if (now.isBefore(australiaShow)) {
-        return `for Asia/Pacific ${moment(australiaShow).fromNow()} at ${moment(
+        return `for Asia/Oceania ${moment(australiaShow).fromNow()} at ${moment(
           australiaShow
         ).format("h:mm:ss A")}`;
       } else if (now.isBefore(europeShow)) {
-        return `for Europe ${moment(europeShow).fromNow()} at ${moment(
+        return `for Europe/Africa ${moment(europeShow).fromNow()} at ${moment(
           europeShow
         ).format("h:mm:ss A")}`;
       } else if (now.isBefore(americasShow)) {
