@@ -1,92 +1,51 @@
 <template>
-  <v-container>
-    <v-row class="text-center">
-      <v-col cols="3" class="date">
-        <v-card class="pa-4">
-          <h2>TODAY</h2>
-          <h3>{{ today }}</h3>
-          <h2>{{ todayYear }}</h2>
+  <v-container fluid>
+    <v-row class="text-center" align="center">
+      <v-col class="date col-md-4 d-none d-md-flex">
+        <v-card class="pa-8 mx-auto flex-grow-1 vertical-align">
+          <div class="text-md-h5 text-lg-h3 font-weight-bold">TODAY</div>
+          <div class="text-sm-h4 font-weight-bold">{{ today }}</div>
+          <div class="text-sm-h4 font-weight-bold">{{ todayYear }}</div>
         </v-card>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="4">
-        <v-card class="pa-4">
-          <h2>UTC</h2>
-          <h1>{{ utc }}</h1>
+      <v-col class="col-lg-4 col-xs-12">
+        <v-card class="pa-6 mx-auto">
+          <h2>{{ mainTime.location }}</h2>
+          <h1>{{ mainTime.time }}</h1>
         </v-card>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="3" class="date">
-        <v-card class="pa-4">
-          <h2>TOMORROW</h2>
-          <h3>{{ tomorrow }}</h3>
-          <h2>{{ tomorrowYear }}</h2>
+      <v-col class="date col-md-4 d-none d-md-flex">
+        <v-card class="pa-8 mx-auto flex-grow-1">
+          <div class="text-md-h5 text-lg-h3 font-weight-bold">TOMORROW</div>
+          <div class="text-sm-h4 font-weight-bold">{{ tomorrow }}</div>
+          <div class="text-sm-h4 font-weight-bold">{{ tomorrowYear }}</div>
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="text-center">
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>DENVER</h2>
-          <h1>{{ denver }}</h1>
-          <h3>{{ denver12h }}</h3>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>NEW YORK</h2>
-          <h1>{{ newyork }}</h1>
-          <h3>{{ newyork12h }}</h3>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>LONDON</h2>
-          <h1>{{ london }}</h1>
-          <h3>{{ london12h }}</h3>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>BERLIN</h2>
-          <h1>{{ berlin }}</h1>
-          <h3>{{ berlin12h }}</h3>
+    <v-row>
+      <v-col cols="3" v-for="(tz, i) in displayedRow1" :key="i">
+        <v-card class="py-8">
+          <div class="text-h2 font-weight-bold text-center text-uppercase">{{ tz.location }}</div>
+          <div class="text-h2 font-weight-bold text-center ma-4">{{ tz.t24h }}</div>
+          <div class="text-h4 font-weight-bold text-center">{{ tz.t12h }}</div>
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="text-center">
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>MOSCOW</h2>
-          <h1>{{ moscow }}</h1>
-          <h3>{{ moscow12h }}</h3>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>TOKYO</h2>
-          <h1>{{ tokyo }}</h1>
-          <h3>{{ tokyo12h }}</h3>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>SYDNEY</h2>
-          <h1>{{ sydney }}</h1>
-          <h3>{{ sydney12h }}</h3>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card class="pa-4">
-          <h2>AUCKLAND</h2>
-          <h1>{{ auckland }}</h1>
-          <h3>{{ auckland12h }}</h3>
+    <v-row>
+      <v-col cols="3" v-for="(tz, i) in displayedRow2" :key="i">
+        <v-card class="py-8">
+          <div class="text-h2 font-weight-bold text-center text-uppercase">{{ tz.location }}</div>
+          <div class="text-h2 font-weight-bold text-center ma-4">{{ tz.t24h }}</div>
+          <div class="text-h4 font-weight-bold text-center">{{ tz.t12h }}</div>
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="text-center">
+    <v-row class="text-center" v-if="nextShow">
       <v-col cols="12">
-        <h2 class="mt-4 next">NEXT SHOW IS {{ nextShow }}</h2>
+        <div class="text-md-h3 text-sm-h4 mt-4 next">Next {{ nextShow.type }} {{ nextShow.fromNow }} at {{ nextShow.displayedTime }}</div>
+        <div class="text-md-h4 text-sm-h5 mt-4 next">{{ nextShow.name }}</div>
       </v-col>
     </v-row>
   </v-container>
@@ -98,33 +57,50 @@ export default {
   name: "WorldClock",
 
   data: () => ({
+    showList: [],
+    rowIteration: 1,
+    displayedRow1: [],
+    displayedRow2: [],
     alwaysDarkMode: true,
     timeInterval: "",
     today: moment().tz("America/Denver").format("MMMM Do"),
     todayYear: moment().tz("America/Denver").format("YYYY"),
     tomorrow: moment().tz("America/Denver").add(1, "day").format("MMMM Do"),
     tomorrowYear: moment().tz("America/Denver").add(1, "day").format("YYYY"),
-    utc: moment().tz("UTC").format("H:mm:ss"),
-    newyork: moment().tz("America/New_York").format("H:mm:ss"),
-    newyork12h: moment().tz("America/New_York").format("h:mm:ss A"),
-    denver: moment().tz("America/Denver").format("H:mm:ss"),
-    denver12h: moment().tz("America/Denver").format("h:mm:ss A"),
-    london: moment().tz("Europe/London").format("H:mm:ss"),
-    london12h: moment().tz("Europe/London").format("h:mm:ss A"),
-    berlin: moment().tz("Europe/Berlin").format("H:mm:s"),
-    berlin12h: moment().tz("Europe/Berlin").format("h:mm:ss A"),
-    moscow: moment().tz("Europe/Moscow").format("H:mm:s"),
-    moscow12h: moment().tz("Europe/Moscow").format("h:mm:ss A"),
-    tokyo: moment().tz("Asia/Tokyo").format("H:mm:s"),
-    tokyo12h: moment().tz("Asia/Tokyo").format("h:mm:ss A"),
-    sydney: moment().tz("Australia/Sydney").format("H:mm:s"),
-    sydney12h: moment().tz("Australia/Sydney").format("h:mm:ss A"),
-    auckland: moment().tz("Pacific/Auckland").format("H:mm:s"),
-    auckland12h: moment().tz("Pacific/Auckland").format("h:mm:ss A"),
+
+    mainTime: { location: "UTC", time: moment().tz("UTC").format("H:mm:ss") },
+    rows: [
+      [
+        { location: "Los Angeles", t24h: moment().tz("America/Los_Angeles").format("H:mm:ss"), t12h: moment().tz("America/Los_Angeles").format("h:mm:ss A") },
+        { location: "Denver", t24h: moment().tz("America/Denver").format("H:mm:ss"), t12h: moment().tz("America/Denver").format("h:mm:ss A") },
+        { location: "Houston", t24h: moment().tz("US/Central").format("H:mm:ss"), t12h: moment().tz("US/Central").format("h:mm:ss A") },
+        { location: "New York", t24h: moment().tz("America/New_York").format("H:mm:ss"), t12h: moment().tz("America/New_York").format("h:mm:ss A") },
+      ],
+      [
+        { location: "Hawaii", t24h: moment().tz("US/Hawaii").format("H:mm:ss"), t12h: moment().tz("US/Hawaii").format("h:mm:ss A") },
+        { location: "Alaska", t24h: moment().tz("US/Alaska").format("H:mm:ss"), t12h: moment().tz("US/Alaska").format("h:mm:ss A") },
+        { location: "Houston", t24h: moment().tz("US/Central").format("H:mm:ss"), t12h: moment().tz("US/Central").format("h:mm:ss A") },
+        { location: "New York", t24h: moment().tz("America/New_York").format("H:mm:ss"), t12h: moment().tz("America/New_York").format("h:mm:ss A") },
+      ],
+      [
+        { location: "London", t24h: moment().tz("Europe/London").format("H:mm:ss"), t12h: moment().tz("Europe/London").format("h:mm:ss A") },
+        { location: "Berlin", t24h: moment().tz("Europe/Berlin").format("H:mm:ss"), t12h: moment().tz("Europe/Berlin").format("h:mm:ss A") },
+        { location: "Kyiv", t24h: moment().tz("Europe/Kiev").format("H:mm:ss"), t12h: moment().tz("Europe/Kiev").format("h:mm:ss A") },
+        { location: "Moscow", t24h: moment().tz("America/New_York").format("H:mm:ss"), t12h: moment().tz("America/New_York").format("h:mm:ss A") },
+      ],
+      [
+        { location: "Shanghai", t24h: moment().tz("Asia/Shanghai").format("H:mm:ss"), t12h: moment().tz("Asia/Shanghai").format("h:mm:ss A") },
+        { location: "Tokyo", t24h: moment().tz("Asia/Tokyo").format("H:mm:ss"), t12h: moment().tz("Asia/Tokyo").format("h:mm:ss A") },
+        { location: "Sydney", t24h: moment().tz("Australia/Sydney").format("H:mm:ss"), t12h: moment().tz("Australia/Sydney").format("h:mm:ss A") },
+        { location: "Auckland", t24h: moment().tz("Pacific/Auckland").format("H:mm:ss"), t12h: moment().tz("Pacific/Auckland").format("h:mm:ss A") },
+      ],
+    ],
+
     nextShow: "",
   }),
   mounted: function () {
     clearInterval(this.timeInterval);
+    this.getShows();
     this.updateTime();
   },
   beforeDestroy() {
@@ -137,81 +113,83 @@ export default {
   },
   methods: {
     toggleDarkMode: function () {
-      if (
-        this.alwaysDarkMode ||
-        moment().format("H") >= 20 ||
-        moment().format("H") < 6
-      ) {
+      if (this.alwaysDarkMode || moment().format("H") >= 20 || moment().format("H") < 6) {
         this.$vuetify.theme.dark = true;
       } else {
         this.$vuetify.theme.dark = false;
       }
     },
     updateTime: function () {
-      const data = this;
-      setInterval(function () {
-        data.utc = moment().tz("UTC").format("H:mm:ss");
-        data.newyork = moment().tz("America/New_York").format("H:mm:ss");
-        data.newyork12h = moment().tz("America/New_York").format("h:mm:ss A");
-        data.denver = moment().tz("America/Denver").format("H:mm:ss");
-        data.denver12h = moment().tz("America/Denver").format("h:mm:ss A");
-        data.london = moment().tz("Europe/London").format("H:mm:ss");
-        data.london12h = moment().tz("Europe/London").format("h:mm:ss A");
-        data.berlin = moment().tz("Europe/Berlin").format("H:mm:ss");
-        data.berlin12h = moment().tz("Europe/Berlin").format("h:mm:ss A");
-        data.moscow = moment().tz("Europe/Moscow").format("H:mm:ss");
-        data.moscow12h = moment().tz("Europe/Moscow").format("h:mm:ss A");
-        data.tokyo = moment().tz("Asia/Tokyo").format("H:mm:ss");
-        data.tokyo12h = moment().tz("Asia/Tokyo").format("h:mm:ss A");
-        data.sydney = moment().tz("Australia/Sydney").format("H:mm:ss");
-        data.sydney12h = moment().tz("Australia/Sydney").format("h:mm:ss A");
-        data.auckland = moment().tz("Pacific/Auckland").format("H:mm:ss");
-        data.auckland12h = moment().tz("Pacific/Auckland").format("h:mm:ss A");
-        data.today = moment().tz("America/Denver").format("MMMM Do");
-        data.todayYear = moment().tz("America/Denver").format("YYYY");
-        data.tomorrow = moment().tz("America/Denver").add(1, "day").format("MMMM Do");
-        data.tomorrowYear = moment().tz("America/Denver").add(1, "day").format("YYYY");
-        data.nextShow = data.getNextShow();
+      const objThis = this;
+      objThis.timeInterval = setInterval(function () {
+        objThis.mainTime.time = moment().tz("UTC").format("H:mm:ss");
 
-        if (data.alwaysDarkMode && data.darkModeEnabled) {
-          return
-        } else {
-          data.toggleDarkMode();
+        objThis.rows = [
+          [
+            { location: "Los Angeles", t24h: moment().tz("America/Los_Angeles").format("H:mm:ss"), t12h: moment().tz("America/Los_Angeles").format("h:mm:ss A") },
+            { location: "Denver", t24h: moment().tz("America/Denver").format("H:mm:ss"), t12h: moment().tz("America/Denver").format("h:mm:ss A") },
+            { location: "Houston", t24h: moment().tz("US/Central").format("H:mm:ss"), t12h: moment().tz("US/Central").format("h:mm:ss A") },
+            { location: "New York", t24h: moment().tz("America/New_York").format("H:mm:ss"), t12h: moment().tz("America/New_York").format("h:mm:ss A") },
+          ],
+          [
+            { location: "Hawaii", t24h: moment().tz("US/Hawaii").format("H:mm:ss"), t12h: moment().tz("US/Hawaii").format("h:mm:ss A") },
+            { location: "Alaska", t24h: moment().tz("US/Alaska").format("H:mm:ss"), t12h: moment().tz("US/Alaska").format("h:mm:ss A") },
+            { location: "Phoenix", t24h: moment().tz("US/Arizona").format("H:mm:ss"), t12h: moment().tz("US/Arizona").format("h:mm:ss A") },
+            { location: "Buenos Aires", t24h: moment().tz("America/Argentina/Buenos_Aires").format("H:mm:ss"), t12h: moment().tz("America/Argentina/Buenos_Aires").format("h:mm:ss A") },
+          ],
+          [
+            { location: "London", t24h: moment().tz("Europe/London").format("H:mm:ss"), t12h: moment().tz("Europe/London").format("h:mm:ss A") },
+            { location: "Berlin", t24h: moment().tz("Europe/Berlin").format("H:mm:ss"), t12h: moment().tz("Europe/Berlin").format("h:mm:ss A") },
+            { location: "Kyiv", t24h: moment().tz("Europe/Kiev").format("H:mm:ss"), t12h: moment().tz("Europe/Kiev").format("h:mm:ss A") },
+            { location: "Moscow", t24h: moment().tz("America/New_York").format("H:mm:ss"), t12h: moment().tz("America/New_York").format("h:mm:ss A") },
+          ],
+          [
+            { location: "Shanghai", t24h: moment().tz("Asia/Shanghai").format("H:mm:ss"), t12h: moment().tz("Asia/Shanghai").format("h:mm:ss A") },
+            { location: "Tokyo", t24h: moment().tz("Asia/Tokyo").format("H:mm:ss"), t12h: moment().tz("Asia/Tokyo").format("h:mm:ss A") },
+            { location: "Sydney", t24h: moment().tz("Australia/Sydney").format("H:mm:ss"), t12h: moment().tz("Australia/Sydney").format("h:mm:ss A") },
+            { location: "Auckland", t24h: moment().tz("Pacific/Auckland").format("H:mm:ss"), t12h: moment().tz("Pacific/Auckland").format("h:mm:ss A") },
+          ],
+        ];
+        objThis.today = moment().tz("America/Denver").format("MMMM Do");
+        objThis.todayYear = moment().tz("America/Denver").format("YYYY");
+        objThis.tomorrow = moment().tz("America/Denver").add(1, "day").format("MMMM Do");
+        objThis.tomorrowYear = moment().tz("America/Denver").add(1, "day").format("YYYY");
+
+        objThis.nextShow = objThis.getNextShow();
+
+        if (moment().minutes() == "00") {
+          objThis.getShows();
+        }
+        
+        objThis.displayedRow1 = objThis.rows[0];
+        objThis.displayedRow2 = objThis.rows[objThis.rowIteration];
+
+        if (moment().seconds() % 5 == 4) {
+          objThis.rowIteration++;
         }
 
-      }, 500);
+        if (objThis.rowIteration > 3) {
+          objThis.rowIteration = 1;
+        }
+
+        if (objThis.alwaysDarkMode && objThis.darkModeEnabled) {
+          return;
+        } else {
+          objThis.toggleDarkMode();
+        }
+      }, 1000);
+    },
+    getShows: async function () {
+      const res = await fetch("https://api.unknower.io/event");
+      const data = await res.json();
+      this.showList = data.events;
     },
     getNextShow: function () {
-      const firstShow = moment("2022-02-22T08:00:00Z");
-      const nextSaturday = moment.utc().isoWeekday(6).format("YYYY-MM-DD");
-      const nextSunday = moment.utc().isoWeekday(7).format("YYYY-MM-DD");
-      const now = moment.utc();
-
-      let australiaShow = `${nextSaturday}T08:00:00Z`;
-      const europeShow = `${nextSaturday}T19:00:00Z`;
-      const americasShow = `${nextSunday}T01:00:00Z`;
-
-      if (
-        moment(australiaShow).diff(now, "days") < 7 &&
-        moment(australiaShow).diff(now, "days") > -2
-      ) {
-        australiaShow = firstShow;
-      }
-
-      if (now.isBefore(australiaShow)) {
-        return `for Asia/Oceania ${moment(australiaShow).fromNow()} at ${moment(
-          australiaShow
-        ).format("h:mm:ss A")}`;
-      } else if (now.isBefore(europeShow)) {
-        return `for Europe/Africa ${moment(europeShow).fromNow()} at ${moment(
-          europeShow
-        ).format("h:mm:ss A")}`;
-      } else if (now.isBefore(americasShow)) {
-        return `for The Americas ${moment(americasShow).fromNow()} at ${moment(
-          americasShow
-        ).format("h:mm:ss A")}`;
-      } else {
-        return "Unknown";
+      if (this.showList) {
+        const nextShow = this.showList.find((show) => moment(show.startTime).isAfter());
+        nextShow.fromNow = moment(nextShow.startTime).fromNow();
+        nextShow.displayedTime = moment(nextShow.startTime).tz("America/Denver").format("hh:mm a");
+        return nextShow;
       }
     },
   },
